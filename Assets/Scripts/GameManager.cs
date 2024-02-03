@@ -111,7 +111,26 @@ public class GameManager : MonoBehaviour
     }
 
     public void PlayerToPosition(string position)
-    {   
-        Player.GetComponent<NavMeshAgent>().SetDestination(Positions[position]);
+    {
+        Player.GetComponent<NavMeshAgent>().destination = Positions[position];
+    }
+
+    public void ProcessMessage(string message)
+    {
+        if(message.Contains("go to"))
+        {
+            message = message.Replace("go to ", "");
+            PlayerToPosition(message);
+            return;
+        }
+
+        foreach(string str in behaviors)
+        {
+            if(message.Contains(str))
+            {
+
+                break;
+            }
+        }
     }
 }
