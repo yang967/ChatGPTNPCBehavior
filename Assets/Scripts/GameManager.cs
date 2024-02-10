@@ -72,30 +72,61 @@ public class GameManager : MonoBehaviour
 
     public string GenerateStartPrompt()
     {
-        string result = "You need to play as an NPC of a game. You have following behaviors(split by comma): ";
+        return GenerateStartPrompt("", "", "", "", "");
+        
+    }
 
-        for(int i = 0; i < behaviors.Count; i++) {
+    public string GenerateStartPrompt(string gender, string genderDescription, string name,  string characteristic, string description) 
+    {
+        string result = "You need to play as an NPC of a game. ";
+        
+        if(name.Length > 0) {
+            result += "Your name is " + name + ". ";
+        }
+        
+        if(gender.Length > 0) {
+            result += "Your gender is " + gender;
+            if (genderDescription.Length != 0) {
+                result += "(" + genderDescription + "). ";
+            }
+            else {
+                result += ". ";
+            }
+        }
+        
+
+        if(characteristic.Length != 0) {
+            result += characteristic + ". ";
+        }
+
+        if(description.Length != 0) {
+            result += description + ". ";
+        }
+
+        result += "You have following behaviors(split by comma): ";
+
+        for (int i = 0; i < behaviors.Count; i++) {
             result += behaviors[i];
-            if(i < behaviors.Count - 1) {
+            if (i < behaviors.Count - 1) {
                 result += ", ";
             }
         }
 
         result += ". ";
 
-        if(Positions.Count > 0) {
+        if (Positions.Count > 0) {
             result += "There are following locations you can go to: ";
             int i = 0;
-            foreach(var position in Positions) {
+            foreach (var position in Positions) {
                 result += position.Key;
-                if(i < Positions.Count - 1) {
+                if (i < Positions.Count - 1) {
                     result += ", ";
                 }
                 i++;
             }
         }
 
-        result += ". You can only reply behavior in their own format. You are currently at Home";
+        result += ". You can only reply behavior in their own format. You are currently at Home. ";
 
         return result;
     }
@@ -128,6 +159,27 @@ public class GameManager : MonoBehaviour
         {
             if(message.Contains(str))
             {
+
+                break;
+            }
+        }
+    }
+
+    public void ProcessMessage(GameObject obj, string message)
+    {
+        if(message.Contains("ignore")) {
+            return;
+        }
+
+        if (message.Contains("go to")) {
+            message = message.Replace("go to ", "");
+            obj.GetComponent<NavMeshAgent>().destination = Positions[message];
+            //PlayerToPosition(message);
+            return;
+        }
+
+        foreach (string str in behaviors) {
+            if (message.Contains(str)) {
 
                 break;
             }
