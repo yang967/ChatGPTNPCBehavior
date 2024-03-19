@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -15,12 +17,17 @@ public class GameManager : MonoBehaviour
 
     private List<string> behaviors;
 
+    private string BehaviorString;
+
+    private string PositionString;
+
     private void Awake()
     {
         instance = this;
         Positions = new Dictionary<string, Vector3>();
         behaviors = new List<string>();
         behaviors.Add("go to [position]");
+        PositionString = string.Empty;
     }
 
     // Start is called before the first frame update
@@ -103,30 +110,33 @@ public class GameManager : MonoBehaviour
             result += description + ". ";
         }
 
-        result += "You have following behaviors(split by comma): ";
+        BehaviorString = "You have following behaviors (split by comma): ";
 
         for (int i = 0; i < behaviors.Count; i++) {
-            result += behaviors[i];
+            BehaviorString += behaviors[i];
             if (i < behaviors.Count - 1) {
-                result += ", ";
+                BehaviorString += ", ";
             }
         }
+        BehaviorString += ". ";
 
-        result += ". ";
+        result += BehaviorString;
 
         if (Positions.Count > 0) {
-            result += "There are following locations you can go to: ";
+            PositionString += "There are following locations you can go to: ";
             int i = 0;
             foreach (var position in Positions) {
-                result += position.Key;
+                PositionString += position.Key;
                 if (i < Positions.Count - 1) {
-                    result += ", ";
+                    PositionString += ", ";
                 }
                 i++;
             }
+            PositionString += ". ";
+            result += PositionString;
         }
 
-        result += ". You can only reply behavior in their own format. You are currently at Home. ";
+        result += "You can only reply behavior in their own format. You cannot reply anything other than the behaviors. You are currently at Home. ";
 
         return result;
     }
@@ -141,48 +151,27 @@ public class GameManager : MonoBehaviour
         return behaviors;
     }
 
-    public void PlayerToPosition(string position)
-    {
-        Player.GetComponent<NavMeshAgent>().destination = Positions[position];
-    }
-
-    public void ProcessMessage(string message)
-    {
-        if(message.Contains("go to"))
-        {
-            message = message.Replace("go to ", "");
-            PlayerToPosition(message);
-            return;
-        }
-
-        foreach(string str in behaviors)
-        {
-            if(message.Contains(str))
-            {
-
-                break;
-            }
-        }
-    }
-
     public void ProcessMessage(GameObject obj, string message)
     {
         if(message.Contains("ignore")) {
             return;
         }
 
-        if (message.Contains("go to")) {
+        if (Regex.Match(message, @"\bgo to", RegexOptions.IgnoreCase).Success) {
             message = message.Replace("go to ", "");
+            message = message.Replace("Go to ", "");
+
             obj.GetComponent<NavMeshAgent>().destination = Positions[message];
-            //PlayerToPosition(message);
             return;
         }
 
         foreach (string str in behaviors) {
             if (message.Contains(str)) {
 
-                break;
+                return;
             }
         }
+
+        obj.GetComponent<NPCControl>().Message("Error! You can only reply behavior in their own format! " + BehaviorString + PositionString);
     }
 }

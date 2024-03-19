@@ -13,6 +13,8 @@ public class OpenAIController : MonoBehaviour
 
     private static OpenAIController instance;
 
+    public HashSet<string> BehaviorHash;
+
     private void Awake()
     {
         instance = this;
@@ -22,7 +24,12 @@ public class OpenAIController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartPrompt();
+        //StartPrompt();
+    }
+
+    public void AddBehavior(string NL)
+    {
+        BehaviorHash.Add(NL);
     }
 
     public static OpenAIController GetInstance()
@@ -30,47 +37,10 @@ public class OpenAIController : MonoBehaviour
         return instance;
     }
 
-    public void Message(string message)
+    public async void StartPrompt(GameObject obj, List<ChatMessage> NPCMessage, string prompt)
     {
-        GetResponse(message);
-    }
-
-    private async void StartPrompt()
-    {
-        string prompt = GameManager.GetInstance().GenerateStartPrompt();
-
-        messages = new List<ChatMessage> {
-            new ChatMessage(ChatMessageRole.System, GameManager.GetInstance().GenerateStartPrompt())
-        };
-
-        Debug.Log("System: " + prompt);
-
-        var chatResult = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
-        {
-            Model = Model.ChatGPTTurbo,
-            Temperature = 0.1,
-            MaxTokens = 50,
-            Messages = messages
-        });
-
-        ChatMessage responseMessage = new ChatMessage();
-        responseMessage.Role = chatResult.Choices[0].Message.Role;
-        responseMessage.Content = chatResult.Choices[0].Message.Content;
-
-        messages.Add(responseMessage);
-
-        Debug.Log("ChatGPT: " + responseMessage.Content);
-
-        GameManager.GetInstance().ProcessMessage(responseMessage.Content);
-    }
-
-    public async void StartPrompt(GameObject obj, List<ChatMessage> NPCMessage)
-    {
-        string prompt = GameManager.GetInstance().GenerateStartPrompt();
-
-        NPCMessage = new List<ChatMessage> {
-            new ChatMessage(ChatMessageRole.System, GameManager.GetInstance().GenerateStartPrompt())
-        };
+        NPCMessage.Clear();
+        NPCMessage.Add(new ChatMessage(ChatMessageRole.System, prompt));
 
         Debug.Log("System: " + prompt);
 
@@ -119,35 +89,5 @@ public class OpenAIController : MonoBehaviour
 
 
         GameManager.GetInstance().ProcessMessage(obj, responseMessage.Content);
-    }
-
-    private async void GetResponse(string UserMessage)
-    {
-        ChatMessage userMessage = new ChatMessage();
-        userMessage.Role = ChatMessageRole.User;
-        userMessage.Content = UserMessage;
-
-        Debug.Log("System: " + UserMessage);
-
-        messages.Add(userMessage);
-
-        var chatResult = await api.Chat.CreateChatCompletionAsync(new ChatRequest()
-        {
-            Model = Model.ChatGPTTurbo,
-            Temperature = 0.1,
-            MaxTokens = 50,
-            Messages = messages
-        });
-
-        ChatMessage responseMessage = new ChatMessage();
-        responseMessage.Role = chatResult.Choices[0].Message.Role;
-        responseMessage.Content = chatResult.Choices[0].Message.Content;
-
-        messages.Add(responseMessage);
-
-        Debug.Log("ChatGPT: " +  responseMessage.Content);
-
-
-        GameManager.GetInstance().ProcessMessage(responseMessage.Content);
     }
 }

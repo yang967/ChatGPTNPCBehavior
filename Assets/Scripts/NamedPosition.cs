@@ -25,7 +25,10 @@ public class NamedPosition : MonoBehaviour
             return;
         }
 
-        OpenAIController.GetInstance().Message("Reached " + name);
+        if(other.TryGetComponent<NPCControl>(out NPCControl control))
+        {
+            control.Message("Reached " + name);
+        }
     }
 
 
