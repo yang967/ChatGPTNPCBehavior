@@ -14,6 +14,10 @@ public class OpenAIController : MonoBehaviour
     private static OpenAIController instance;
 
     public HashSet<string> BehaviorHash;
+    public HashSet<string> BehaviorReplacement;
+
+    List<string> BehaviorList;
+    List<string> BehaviorReplacementList;
 
     private void Awake()
     {
@@ -59,7 +63,9 @@ public class OpenAIController : MonoBehaviour
 
         Debug.Log("ChatGPT: " + responseMessage.Content);
 
-        GameManager.GetInstance().ProcessMessage(obj, responseMessage.Content);
+        obj.GetComponent<NPCControl>().ProcessMessage(responseMessage.Content);
+
+        //GameManager.GetInstance().ProcessMessage(obj, responseMessage.Content);
     }
 
     public async void GetResponse(GameObject obj, List<ChatMessage> NPCMessage, string UserMessage)
@@ -87,7 +93,7 @@ public class OpenAIController : MonoBehaviour
 
         Debug.Log("ChatGPT: " + responseMessage.Content);
 
-
-        GameManager.GetInstance().ProcessMessage(obj, responseMessage.Content);
+        obj.GetComponent<NPCControl>().ProcessMessage(responseMessage.Content);
+        //GameManager.GetInstance().ProcessMessage(obj, responseMessage.Content);
     }
 }

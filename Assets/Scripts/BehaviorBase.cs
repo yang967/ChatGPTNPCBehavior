@@ -4,21 +4,20 @@ using UnityEngine;
 
 public abstract class BehaviorBase : MonoBehaviour
 {
-    string behavior;
-    string behaviorRegex;
+    protected string behavior;
+    protected string behaviorRegex;
+    protected NPCControl control;
 
-    // Start is called before the first frame update
-    void Start()
+    protected virtual void Awake()
     {
+        control = GetComponent<NPCControl>();
         GetComponent<NPCControl>().AddDelegate(behavior, behaviorRegex, ExecuteBehavior);
     }
-
-    // Update is called once per frame
-    void Update()
+    // Start is called before the first frame update
+    protected virtual void Start()
     {
-        
     }
 
-    protected abstract void ExecuteBehavior();
+    protected abstract void ExecuteBehavior(string message);
 
 }

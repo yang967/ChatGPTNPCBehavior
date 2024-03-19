@@ -2,7 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-interface Notifier
+public abstract class Notifier : MonoBehaviour
 {
-    void Notify();
+
+    protected void Notify(NPCControl control, string message)
+    {
+        control.Message(message);
+    }
 }
