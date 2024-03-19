@@ -50,7 +50,7 @@ public class OpenAIController : MonoBehaviour
 
         var chatResult = await api.Chat.CreateChatCompletionAsync(new ChatRequest() {
             Model = Model.ChatGPTTurbo,
-            Temperature = 0.1,
+            Temperature = 1,
             MaxTokens = 50,
             Messages = NPCMessage
         });

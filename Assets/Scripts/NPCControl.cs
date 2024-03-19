@@ -83,7 +83,7 @@ public class NPCControl : MonoBehaviour
 
         if (name.Length > 0)
         {
-            result += "Your name is " + name + ". ";
+            result += "Your name is " + Name + ". ";
         }
 
         if (Gender.Length > 0)
@@ -102,12 +102,12 @@ public class NPCControl : MonoBehaviour
 
         if (Characteristic.Length != 0)
         {
-            result += Characteristic + ". ";
+            result += Characteristic + " ";
         }
 
         if (Description.Length != 0)
         {
-            result += Description + ". ";
+            result += Description + " ";
         }
 
         BehaviorString = "You have following behaviors (split by comma): ";
