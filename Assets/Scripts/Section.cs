@@ -2,15 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Section : MonoBehaviour
+public interface Section
 {
-    [SerializeField]
-    protected int Priority = 0;
+    int Priority { get; set; }
 
-    public abstract string CollectSection();
-
-    public int GetPriority()
-    {
-        return Priority;
-    }
+    string CollectSection();
 }

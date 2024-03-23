@@ -130,7 +130,7 @@ public class NPCControl : MonoBehaviour
 
         foreach(Section s in GetComponents<Section>())
         {
-            Sections.Add(new KeyValuePair<int, Section>(s.GetPriority(), s));
+            Sections.Add(new KeyValuePair<int, Section>(s.Priority, s));
         }
 
         Sections.Sort((a, b) => b.Key.CompareTo(a.Key));

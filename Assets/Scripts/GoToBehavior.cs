@@ -4,8 +4,28 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class GoToBehavior : BehaviorBase
+public class GoToBehavior : BehaviorBase, Section
 {
+    public int Priority { get; set; }
+
+    public string CollectSection()
+    {
+        string result = "There are following locations you can go to (split by comma): ";
+        int i = 0;
+        Dictionary<string, Vector3> Positions = NamedPosition.GetNamedPosisioned();
+        foreach (var position in Positions)
+        {
+            result += position.Key;
+            if (i < Positions.Count - 1)
+            {
+                result += ", ";
+            }
+            i++;
+        }
+        result += ". ";
+
+        return result;
+    }
 
     protected override void Awake()
     {
