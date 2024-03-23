@@ -123,21 +123,18 @@ public class NPCControl : MonoBehaviour
         BehaviorString += ". ";
         result += BehaviorString;
 
-        List<string> Positions = GameManager.GetInstance().GetPositions();
-        if (Positions.Count > 0)
+        List<KeyValuePair<int, Section>> Sections = new List<KeyValuePair<int, Section>>();
+
+        foreach(Section s in GetComponents<Section>())
         {
-            result += "There are following locations you can go to: ";
-            int i = 0;
-            foreach (var position in Positions)
-            {
-                result += position;
-                if (i < Positions.Count - 1)
-                {
-                    result += ", ";
-                }
-                i++;
-            }
-            result += ". ";
+            Sections.Add(new KeyValuePair<int, Section>(s.GetPriority(), s));
+        }
+
+        Sections.Sort((a, b) => b.Key.CompareTo(a.Key));
+
+        foreach(var section in Sections)
+        {
+            result += section.Value.CollectSection() + " ";
         }
 
         result += "You can only reply behavior in their own format. You cannot reply anything other than the behaviors. You are currently at Home. ";
