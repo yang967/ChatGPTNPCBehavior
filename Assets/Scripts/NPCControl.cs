@@ -56,10 +56,13 @@ public class NPCControl : MonoBehaviour
             string regex = behaviorRegex[i];
             if(Regex.Match(message, regex, RegexOptions.IgnoreCase).Success)
             {
+                //Debug.Log(regex);
                 Behaviors[regex](message);
                 return;
             }
         }
+
+        //Debug.Log("Match non");
 
         Message("Error! You can only reply behavior in their own format! " + BehaviorString);
     }
@@ -137,7 +140,7 @@ public class NPCControl : MonoBehaviour
             result += section.Value.CollectSection() + " ";
         }
 
-        result += "You can only reply behavior in their own format. You cannot reply anything other than the behaviors. You are currently at Home. ";
+        result += "You can only reply 1 behavior at a time in their own format. You cannot reply anything other than the behaviors. You are currently at Home. ";
 
         return result;
     }

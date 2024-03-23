@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NamedPosition : MonoBehaviour
+public class NamedPosition : Notifier
 {
     static Dictionary<string, Vector3> NamedPosisions = new Dictionary<string, Vector3>();
 
@@ -35,7 +35,7 @@ public class NamedPosition : MonoBehaviour
 
         if(other.TryGetComponent<NPCControl>(out NPCControl control))
         {
-            control.Message("Reached " + name);
+            Notify(control, ("Reached " + name));
         }
     }
 

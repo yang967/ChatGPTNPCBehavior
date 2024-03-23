@@ -20,6 +20,8 @@ public class GoToBehavior : BehaviorBase
         message = regex.Replace(message, "", 1);
         regex = new Regex(Regex.Escape("Go to "));
         message = regex.Replace(message, "", 1);
+        if (message[message.Length - 1] == '.')
+            message = message.Substring(0, message.Length - 1);
 
         Vector3 position = GameManager.GetInstance().GetPosition(message);
         GetComponent<NavMeshAgent>().SetDestination(position);
