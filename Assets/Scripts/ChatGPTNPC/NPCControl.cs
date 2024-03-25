@@ -14,6 +14,10 @@ public class NPCControl : MonoBehaviour
     [SerializeField] string Characteristic;
     [SerializeField] string Description;
 
+    int SummarizeCounter;
+    [SerializeField]
+    int SummarizePerPrompts = 10;
+
     public delegate void BehaviorDelegate(string message);
 
     List<string> behaviors;
@@ -31,14 +35,18 @@ public class NPCControl : MonoBehaviour
         Behaviors = new Dictionary<string, BehaviorDelegate>();
         behaviors = new List<string>();
         behaviorRegex = new List<string>();
+        SummarizeCounter = 0;
     }
 
     // Start is called before the first frame update
-    void Start()
+    async void Start()
     {
         string prompt = GenerateStartPrompt();
 
-        OpenAIController.GetInstance().GetResponse(gameObject, messages, prompt, 0);
+        await OpenAIController.GetInstance().GetResponse(gameObject, messages, prompt, 0);
+
+        string result = messages[messages.Count - 1].Content;
+        ProcessMessage(result);
     }
 
     public void ProcessMessage(string message)
@@ -59,10 +67,22 @@ public class NPCControl : MonoBehaviour
         Message("Error! You can only reply behavior in their own format! " + BehaviorString);
     }
 
-    public void Message(string message)
+    public async void Message(string message)
     {
-        OpenAIController.GetInstance().GetResponse(gameObject, messages, message);
+        await OpenAIController.GetInstance().GetResponse(gameObject, messages, message);
         string response = messages[messages.Count - 1].Content;
+        ProcessMessage(response);
+        SummarizeCounter++;
+        if(SummarizeCounter >= SummarizePerPrompts)
+        {
+            await OpenAIController.GetInstance().GetResponse(gameObject, messages, "Summarize all previous prompts except the first one in natural language as short as possible.");
+            ChatMessage startPrompt = messages[0];
+            ChatMessage Summarized = messages[messages.Count - 1];
+            messages.Clear();
+            messages.Add(startPrompt);
+            messages.Add(Summarized);
+            SummarizeCounter = 0;
+        }
     }
 
     public void AddDelegate(string name, string regex, BehaviorDelegate behavior)

@@ -2388,7 +2388,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: dd3f39d1bc468e04c8ba323a16780b86, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2477,6 +2477,7 @@ MonoBehaviour:
   Name: Peter
   Characteristic: You are a person who really don't like work.
   Description: You don't have a job, so you never go to the company.
+  SummarizePerPrompts: 10
 --- !u!114 &1508141061
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2735,6 +2736,7 @@ MonoBehaviour:
   Name: Adam
   Characteristic: 
   Description: 
+  SummarizePerPrompts: 10
 --- !u!54 &1989777829
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2825,7 +2827,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: ee95c9222cf16144ba47e637d11b819c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

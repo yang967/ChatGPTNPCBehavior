@@ -5,6 +5,8 @@ using OpenAI_API;
 using OpenAI_API.Chat;
 using System;
 using OpenAI_API.Models;
+using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 public class OpenAIController : MonoBehaviour
 {
@@ -29,7 +31,7 @@ public class OpenAIController : MonoBehaviour
         return instance;
     }
 
-    public async void GetResponse(GameObject obj, List<ChatMessage> NPCMessage, string UserMessage, int role = 1)
+    public async Task<ChatMessage> GetResponse(GameObject obj, List<ChatMessage> NPCMessage, string UserMessage, int role = 1)
     {
         ChatMessage userMessage = new ChatMessage();
         if(role == 0)
@@ -48,7 +50,7 @@ public class OpenAIController : MonoBehaviour
 
         var chatResult = await api.Chat.CreateChatCompletionAsync(new ChatRequest() {
             Model = Model.ChatGPTTurbo,
-            Temperature = 0.1,
+            Temperature = 1,
             MaxTokens = 50,
             Messages = NPCMessage
         });
@@ -61,6 +63,6 @@ public class OpenAIController : MonoBehaviour
 
         Debug.Log("ChatGPT: " + responseMessage.Content);
 
-        obj.GetComponent<NPCControl>().ProcessMessage(responseMessage.Content);
+        return responseMessage;
     }
 }
