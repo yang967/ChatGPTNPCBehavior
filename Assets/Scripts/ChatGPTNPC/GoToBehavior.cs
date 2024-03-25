@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class GoToBehavior : BehaviorBase, Section
+public class GoToBehavior : Behavior, Section
 {
     public int Priority { get; set; }
 
@@ -43,7 +43,7 @@ public class GoToBehavior : BehaviorBase, Section
         if (message[message.Length - 1] == '.')
             message = message.Substring(0, message.Length - 1);
 
-        Vector3 position = GameManager.GetInstance().GetPosition(message);
+        Vector3 position = NamedPosition.NamedPos[message];
         GetComponent<NavMeshAgent>().SetDestination(position);
     }
 

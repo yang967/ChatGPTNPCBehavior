@@ -6,13 +6,14 @@ public class NamedPosition : Notifier
 {
     static Dictionary<string, Vector3> NamedPosisions = new Dictionary<string, Vector3>();
 
+    public static Dictionary<string, Vector3> NamedPos {  get { return NamedPosisions; } }
+
     private bool CanRespond;
 
     private void Awake()
     {
         CanRespond = false;
         NamedPosisions.Add(name, transform.position);
-        GameManager.GetInstance().AddPosition(name, transform.position);
         StartCoroutine(NotRespondTime());
     }
 

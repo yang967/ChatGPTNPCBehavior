@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IgnoreBehavior : BehaviorBase
+public class IgnoreBehavior : Behavior
 {
     protected override void Awake()
     {

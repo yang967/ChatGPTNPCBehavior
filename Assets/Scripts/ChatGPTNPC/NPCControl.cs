@@ -36,17 +36,9 @@ public class NPCControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //string prompt = GameManager.GetInstance().GenerateStartPrompt(Gender, GenderDescription, Name, Characteristic, Description);
-
         string prompt = GenerateStartPrompt();
 
-        OpenAIController.GetInstance().StartPrompt(gameObject, messages, prompt);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        OpenAIController.GetInstance().GetResponse(gameObject, messages, prompt, 0);
     }
 
     public void ProcessMessage(string message)

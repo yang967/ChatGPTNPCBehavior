@@ -9,15 +9,8 @@ using OpenAI_API.Models;
 public class OpenAIController : MonoBehaviour
 {
     private OpenAIAPI api;
-    private List<ChatMessage> messages;
 
     private static OpenAIController instance;
-
-    public HashSet<string> BehaviorHash;
-    public HashSet<string> BehaviorReplacement;
-
-    List<string> BehaviorList;
-    List<string> BehaviorReplacementList;
 
     private void Awake()
     {
@@ -31,47 +24,22 @@ public class OpenAIController : MonoBehaviour
         //StartPrompt();
     }
 
-    public void AddBehavior(string NL)
-    {
-        BehaviorHash.Add(NL);
-    }
-
     public static OpenAIController GetInstance()
     {
         return instance;
     }
 
-    public async void StartPrompt(GameObject obj, List<ChatMessage> NPCMessage, string prompt)
-    {
-        NPCMessage.Clear();
-        NPCMessage.Add(new ChatMessage(ChatMessageRole.System, prompt));
-
-        Debug.Log("System: " + prompt);
-
-        var chatResult = await api.Chat.CreateChatCompletionAsync(new ChatRequest() {
-            Model = Model.ChatGPTTurbo,
-            Temperature = 1,
-            MaxTokens = 50,
-            Messages = NPCMessage
-        });
-
-        ChatMessage responseMessage = new ChatMessage();
-        responseMessage.Role = chatResult.Choices[0].Message.Role;
-        responseMessage.Content = chatResult.Choices[0].Message.Content;
-
-        NPCMessage.Add(responseMessage);
-
-        Debug.Log("ChatGPT: " + responseMessage.Content);
-
-        obj.GetComponent<NPCControl>().ProcessMessage(responseMessage.Content);
-
-        //GameManager.GetInstance().ProcessMessage(obj, responseMessage.Content);
-    }
-
-    public async void GetResponse(GameObject obj, List<ChatMessage> NPCMessage, string UserMessage)
+    public async void GetResponse(GameObject obj, List<ChatMessage> NPCMessage, string UserMessage, int role = 1)
     {
         ChatMessage userMessage = new ChatMessage();
-        userMessage.Role = ChatMessageRole.User;
+        if(role == 0)
+        {
+            userMessage.Role = ChatMessageRole.System;
+        }
+        else
+        {
+            userMessage.Role = ChatMessageRole.User;
+        }
         userMessage.Content = UserMessage;
 
         Debug.Log("System: " + UserMessage);
@@ -94,6 +62,5 @@ public class OpenAIController : MonoBehaviour
         Debug.Log("ChatGPT: " + responseMessage.Content);
 
         obj.GetComponent<NPCControl>().ProcessMessage(responseMessage.Content);
-        //GameManager.GetInstance().ProcessMessage(obj, responseMessage.Content);
     }
 }

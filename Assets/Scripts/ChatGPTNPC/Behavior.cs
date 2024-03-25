@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class BehaviorBase : MonoBehaviour
+public abstract class Behavior : MonoBehaviour
 {
     protected string behavior;
     protected string behaviorRegex;
