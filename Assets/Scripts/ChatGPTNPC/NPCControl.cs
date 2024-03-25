@@ -49,7 +49,7 @@ public class NPCControl : MonoBehaviour
         ProcessMessage(result);
     }
 
-    public void ProcessMessage(string message)
+    public bool ProcessMessage(string message)
     {
         for(int i = 0; i < behaviorRegex.Count; i++)
         {
@@ -58,29 +58,37 @@ public class NPCControl : MonoBehaviour
             {
                 //Debug.Log(regex);
                 Behaviors[regex](message);
-                return;
+                return true;
             }
         }
 
         //Debug.Log("Match non");
 
         Message("Error! You can only reply behavior in their own format! " + BehaviorString);
+        return false;
     }
 
     public async void Message(string message)
     {
         await OpenAIController.GetInstance().GetResponse(gameObject, messages, message);
         string response = messages[messages.Count - 1].Content;
-        ProcessMessage(response);
-        SummarizeCounter++;
+        bool Success = ProcessMessage(response);
+        /*if(Success)
+        {
+            SummarizeCounter++;
+        }*/
+        
         if(SummarizeCounter >= SummarizePerPrompts)
         {
             await OpenAIController.GetInstance().GetResponse(gameObject, messages, "Summarize all previous prompts except the first one in natural language as short as possible.");
             ChatMessage startPrompt = messages[0];
-            ChatMessage Summarized = messages[messages.Count - 1];
+            startPrompt.Content += "Previous Action Summary: " + messages[messages.Count - 1].Content;
+            //ChatMessage Summarized = messages[messages.Count - 1];
+            //Summarized.Content = "Previous Action Summary: " + Summarized.Content;
             messages.Clear();
             messages.Add(startPrompt);
-            messages.Add(Summarized);
+            //Debug.Log(messages[0].Content);
+            //messages.Add(Summarized);
             SummarizeCounter = 0;
         }
     }
@@ -152,7 +160,7 @@ public class NPCControl : MonoBehaviour
             result += section.Value.CollectSection() + " ";
         }
 
-        result += "You can only reply 1 behavior at a time in their own format. You cannot reply anything other than the behaviors. You are currently at Home. ";
+        result += "You can only reply 1 behavior at a time in their own format. You cannot reply anything other than the behaviors unless you are asked to. You are currently at Home. ";
 
         return result;
     }
