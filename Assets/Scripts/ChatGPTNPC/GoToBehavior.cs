@@ -6,7 +6,10 @@ using UnityEngine.AI;
 
 public class GoToBehavior : Behavior, Section
 {
-    public int Priority { get; set; }
+    [SerializeField]
+    protected int priority;
+
+    public int Priority { get { return priority; } set { priority = value; } }
 
     public string CollectSection()
     {

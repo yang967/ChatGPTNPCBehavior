@@ -11,8 +11,6 @@ public class NPCControl : MonoBehaviour
     [SerializeField] string GenderDescription;
 
     [SerializeField] string Name;
-    [SerializeField] string Characteristic;
-    [SerializeField] string Description;
 
     int SummarizeCounter;
     [SerializeField]
@@ -122,17 +120,6 @@ public class NPCControl : MonoBehaviour
             }
         }
 
-
-        if (Characteristic.Length != 0)
-        {
-            result += Characteristic + " ";
-        }
-
-        if (Description.Length != 0)
-        {
-            result += Description + " ";
-        }
-
         BehaviorString = "You have following behaviors (split by comma): ";
 
         for (int i = 0; i < behaviors.Count; i++)
@@ -147,7 +134,6 @@ public class NPCControl : MonoBehaviour
         result += BehaviorString;
 
         List<KeyValuePair<int, Section>> Sections = new List<KeyValuePair<int, Section>>();
-
         foreach(Section s in GetComponents<Section>())
         {
             Sections.Add(new KeyValuePair<int, Section>(s.Priority, s));
@@ -164,4 +150,11 @@ public class NPCControl : MonoBehaviour
 
         return result;
     }
+}
+
+enum StartPromptSection {
+    Start,
+    Behavior,
+    BehaviorRule,
+    CurrentStatus
 }
