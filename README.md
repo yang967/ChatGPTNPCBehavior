@@ -8,6 +8,8 @@ This Project let ChatGPT to control NPC behavior. It gives ChatGPT a list of beh
 
 # Documentation
 
+All the framework file is under **Assets/Scripts/ChatGPTNPC**
+
 ## Basic Setup
 
 In a new scene, attach an **OpenAIController** Class to a GameObject to perform communication to ChatGPT. OpenAIController is programmed based on *OpenAI-API-dotnet* by **OkGoDoIt** (link is attached at the start of the file). 
