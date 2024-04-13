@@ -100,38 +100,68 @@ public class NPCControl : MonoBehaviour
 
     public string GenerateStartPrompt()
     {
-        string result = "You need to play as an NPC of a game. ";
+        OverrideSection[] overrideSections = GetComponents<OverrideSection>();
+        Dictionary<StartPromptSection, OverrideSection> osections = new Dictionary<StartPromptSection, OverrideSection>();
+        osections[StartPromptSection.Start] = null;
+        osections[StartPromptSection.Behavior] = null;
+        osections[StartPromptSection.CurrentStatus] = null;
+        osections[StartPromptSection.BehaviorRule]  = null;
 
-        if (name.Length > 0)
+        foreach(OverrideSection s in overrideSections)
         {
-            result += "Your name is " + Name + ". ";
+            osections[s.OverrideStartPromptSection] = s;
         }
 
-        if (Gender.Length > 0)
+        string result = "";
+        if (osections[StartPromptSection.Start] == null)
         {
-            result += "Your gender is " + Gender;
-            if (GenderDescription.Length != 0)
+            result = "You need to play as an NPC of a game. ";
+
+            if (name.Length > 0)
             {
-                result += "(" + GenderDescription + "). ";
+                result += "Your name is " + Name + ". ";
             }
-            else
+
+            if (Gender.Length > 0)
             {
-                result += ". ";
+                result += "Your gender is " + Gender;
+                if (GenderDescription.Length != 0)
+                {
+                    result += "(" + GenderDescription + "). ";
+                }
+                else
+                {
+                    result += ". ";
+                }
             }
         }
-
-        BehaviorString = "You have following behaviors (split by comma): ";
-
-        for (int i = 0; i < behaviors.Count; i++)
+        else
         {
-            BehaviorString += behaviors[i];
-            if (i < behaviors.Count - 1)
-            {
-                BehaviorString += ", ";
-            }
+            result = osections[StartPromptSection.Start].CollectOverrideSection();
         }
-        BehaviorString += ". ";
+
+        BehaviorString = "";
+        if (osections[StartPromptSection.Behavior] == null)
+        {
+            BehaviorString = "You have following behaviors (split by comma): ";
+
+            for (int i = 0; i < behaviors.Count; i++)
+            {
+                BehaviorString += behaviors[i];
+                if (i < behaviors.Count - 1)
+                {
+                    BehaviorString += ", ";
+                }
+            }
+            BehaviorString += ". ";
+        }
+        else
+        {
+            BehaviorString = osections[StartPromptSection.Behavior].CollectOverrideSection();
+        }
+
         result += BehaviorString;
+
 
         List<KeyValuePair<int, Section>> Sections = new List<KeyValuePair<int, Section>>();
         foreach(Section s in GetComponents<Section>())
@@ -146,13 +176,29 @@ public class NPCControl : MonoBehaviour
             result += section.Value.CollectSection() + " ";
         }
 
-        result += "You can only reply 1 behavior at a time in their own format. You cannot reply anything other than the behaviors unless you are asked to. You are currently at Home. ";
+        if (osections[StartPromptSection.BehaviorRule] == null)
+        {
+            result += "You can only reply 1 behavior at a time in their own format. You cannot reply anything other than the behaviors unless you are asked to.";
+        }
+        else
+        {
+            result += osections[StartPromptSection.BehaviorRule].CollectOverrideSection();
+        }
+
+        if (osections[StartPromptSection.CurrentStatus] == null)
+        {
+            result += "You are currently at Home. ";
+        }
+        else
+        {
+            result += osections[StartPromptSection.CurrentStatus].CollectOverrideSection();
+        }
 
         return result;
     }
 }
 
-enum StartPromptSection {
+public enum StartPromptSection {
     Start,
     Behavior,
     BehaviorRule,
