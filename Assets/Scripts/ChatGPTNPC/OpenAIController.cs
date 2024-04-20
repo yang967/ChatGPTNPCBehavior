@@ -65,4 +65,9 @@ public class OpenAIController : MonoBehaviour
 
         return responseMessage;
     }
+
+    public bool APIInitialized()
+    {
+        return api != null;
+    }
 }

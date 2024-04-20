@@ -2,6 +2,7 @@ using OpenAI_API.Chat;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -27,6 +28,8 @@ public class NPCControl : MonoBehaviour
 
     private List<ChatMessage> messages;
 
+    int delegateAdditionCnt = 0;
+
     private void Awake()
     {
         messages = new List<ChatMessage>();
@@ -37,15 +40,34 @@ public class NPCControl : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    async void Start()
+    void Start()
     {
+        StartCoroutine(NPCStartRoutine());
+    }
+
+    IEnumerator NPCStartRoutine()
+    {
+        yield return new WaitUntil(() => delegateAdditionCnt == 0);
         string prompt = GenerateStartPrompt();
 
-        await OpenAIController.GetInstance().GetResponse(gameObject, messages, prompt, 0);
+        //await OpenAIController.GetInstance().GetResponse(gameObject, messages, prompt, 0);
+
+        yield return new WaitUntil(() => OpenAIController.GetInstance().APIInitialized());
+
+        Task task = OpenAIResponse(prompt);
+
+        yield return new WaitUntil(() => task.IsCompleted);
 
         string result = messages[messages.Count - 1].Content;
         ProcessMessage(result);
     }
+
+    async Task OpenAIResponse(string prompt)
+    {
+        await OpenAIController.GetInstance().GetResponse(gameObject, messages, prompt, 0);
+    }    
+
+
 
     public bool ProcessMessage(string message)
     {
@@ -93,9 +115,17 @@ public class NPCControl : MonoBehaviour
 
     public void AddDelegate(string name, string regex, BehaviorDelegate behavior)
     {
+        StartCoroutine(AddDelegateRoutine(name, regex, behavior));
+        delegateAdditionCnt++;
+    }
+
+    IEnumerator AddDelegateRoutine(string name, string regex, BehaviorDelegate behavior)
+    {
+        yield return new WaitUntil(() => Behaviors != null && behaviors != null && behaviorRegex != null);
         Behaviors.Add(regex, behavior);
         behaviors.Add(name);
         behaviorRegex.Add(regex);
+        delegateAdditionCnt--;
     }
 
     public string GenerateStartPrompt()
