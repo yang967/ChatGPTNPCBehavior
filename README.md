@@ -18,11 +18,9 @@ Currently the project will read the OpenAI API key from your **System Environmen
 
 After create an NPC GameObject, attach an **NPCControl** Class to it. NPCControl class handles the behavior processing of the NPC. You can define NPC's name and gender in NPCControl class.
 
-In the *Script Execution Order*, make sure *NPCControl* is running after *OpenAIController*.
-
 Initially, NPC does not contain any behavior. If you want to add a behavior to a certain NPC, you need to attach a class that inherit **Behavior** class. There is a demo behavior class named GoToBehavior.
 
-You can extend the content of ChatGPT NPC using **Behavior**, **Notifier**, and **Section**
+You can extend the content of ChatGPT NPC using **Behavior**, **Notifier**, **Section**, and **OverrideSection**
 
 ### Behavior
 
@@ -32,8 +30,6 @@ If you want to define a new behavior, you can inherit **Behavior** class. There 
 + ExecuteBehavior: this is a class that you should define how to execute this behavior. When the returned behavior is identified by your regular expression, this method will be called with the parameter of the full returned text. Your method should analyze returned text if necessary, and perform the behavior. For go to [position] example, ExecuteBehavior method should extract position from the returned text, and then map the position word to actual Vector3 variable, and then run a pathfinding algorithm to that Vector3 variable.
 
 **Always define your behavior string and behavior regex before the base awake method**
-
-In the *Script Execution Order*, you should always run *Behavior* after *NPCControl*
 
 ### Notifier
 
@@ -48,4 +44,15 @@ If you want to add extra message to the Start Prompt (First Prompt send to ChatG
 + CollectSection: CollectionSection should return the message that you want to add to the Start Prompt.
 
 GoToBehavior is also a demo Section class. It not only add the go to [position] behavior to the NPC, but also add the position that an NPC can go to in the start prompt. You can use it as a reference when you feel confused.
+
+### OverrideSection
+
+Though Section allows you to add additional content to the start prompt, there could still exists undesired content in the initial start prompt based on your needs. OverrideSection allows you to directly overide certain part in the start prompt. The start prompt is divided into 4 sections: 
+
++ Start: Define the information of this NPC, such as name and gender.
++ Behavior: Contain the behavior list of this NPC
++ BehaviorRule: Contain the rule for processing the behavior. The initial rule is ChatGPT can only return 1 behavior in each prompt.
++ CurrentStatus: Define the initial status of the NPC. e.g. If NPC is at home, then this can be "You are currently at Home".
+
+You can override any of the above 4 sections by using OverrideSection.
 
